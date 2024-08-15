@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { collection, doc, getDoc, writeBatch } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { db } from "@/firebase";
 import {
   Container,
   TextField,
@@ -10,6 +13,11 @@ import {
   Grid,
   Card,
   CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 
 export default function Generate() {
@@ -128,8 +136,39 @@ export default function Generate() {
           </Box>
         )}
       </Box>
-
-      {/* We'll add flashcard display here */}
+      {flashcards.length > 0 && (
+        <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOpenDialog}>
+            Save Flashcards
+          </Button>
+        </Box>
+      )}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Save Flashcard Set</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter a name for your flashcard set.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Set Name"
+            type="text"
+            fullWidth
+            value={setName}
+            onChange={(e) => setSetName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={saveFlashcards} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
