@@ -4,9 +4,30 @@ import getStripe from "@/utils/get-stripe";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Container } from "react-bootstrap";
 import Head from "next/head";
-import { AppBar, Toolbar, Typography, Button, Box, Grid } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+} from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.push("/sign-in");
+  };
+
+  const handleSignUp = () => {
+    router.push("/sign-up");
+  };
+
   const handleSubmit = async () => {
     const checkoutSession = await fetch("/api/checkout_sessions", {
       method: "POST",
@@ -37,8 +58,12 @@ export default function Home() {
             Flashcards SaaS
           </Typography>
           <SignedOut>
-            <Button color="inherit">Log in</Button>
-            <Button color="inherit">Sign up</Button>
+            <Button color="inherit" onClick={handleLogin}>
+              Log in
+            </Button>
+            <Button color="inherit" onClick={handleSignUp}>
+              Sign up
+            </Button>
           </SignedOut>
           <SignedIn>
             <UserButton />
@@ -64,20 +89,85 @@ export default function Home() {
           Learn More
         </Button>
       </Box>
+
       <Box sx={{ my: 6 }}>
         <Typography variant="h4" component="h2" gutterBottom>
           Features
         </Typography>
         <Grid container spacing={4}>
-          {/* Feature items */}
+          {[
+            "Automatic Text Parsing",
+            "Multiple Flashcard Designs",
+            "Export to PDF",
+            "Collaborative Decks",
+            "Advanced Study Modes",
+          ].map((feature, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" component="div">
+                    {feature}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {`Description of the ${feature.toLowerCase()}.`}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
+
       <Box sx={{ my: 6, textAlign: "center" }}>
         <Typography variant="h4" component="h2" gutterBottom>
           Pricing
         </Typography>
         <Grid container spacing={4} justifyContent="center">
-          {/* Pricing plans */}
+          {[
+            {
+              name: "Basic",
+              price: "$9/month",
+              features: ["Feature A", "Feature B", "Feature C"],
+            },
+            {
+              name: "Pro",
+              price: "$19/month",
+              features: ["Feature A", "Feature B", "Feature C", "Feature D"],
+            },
+            {
+              name: "Enterprise",
+              price: "Contact Us",
+              features: [
+                "All Features",
+                "Priority Support",
+                "Custom Solutions",
+              ],
+            },
+          ].map((plan, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h5" component="div">
+                    {plan.name}
+                  </Typography>
+                  <Typography variant="h6" component="div">
+                    {plan.price}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {plan.features.join(", ")}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}>
+                    Choose {plan.name}
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
     </Container>
